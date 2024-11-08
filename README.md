@@ -200,7 +200,10 @@ And the link for the currently used option in this readme: https://contrib.rocks
 
 <br>
   <p align="center">
-    Built and maintained by <a href="https://www.moritzsontheimer.cool">Moritz Sontheimer</a> and <a href="https://github.com/vomseok"> Yonseok Kwon </a>.
+    Built and maintained by 
+    <a href="https://www.moritzsontheimer.cool">Moritz Sontheimer</a>,
+    <a href="https://github.com/amit2011">Amit Agarwal</a>,
+    and <a href="https://github.com/vomseok"> Yonseok Kwon </a>.
   </p>
 </p>
 
