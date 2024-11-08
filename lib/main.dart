@@ -1,6 +1,7 @@
 import 'dart:async'; // Import for Timer
 import 'dart:math'; // Import for random number generation
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Welcome to Green Duck 🦆'),
+      home: const MyHomePage(title: 'Welcome to Green Duck ©'),
     );
   }
 }
@@ -32,7 +33,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
@@ -54,12 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.lightGreen[300],
         title: Text(widget.title),
       ),
-      body: Stack(
-        children: [
-          Center(
-            child: _screens[_currentIndex], // Display the selected screen
-          ),
-        ],
+      body: Center(
+        child: _screens[_currentIndex], // Display the selected screen
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -85,56 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// Moving Banner Widget
-class MovingBanner extends StatefulWidget {
-  const MovingBanner({Key? key}) : super(key: key);
-
-  @override
-  _MovingBannerState createState() => _MovingBannerState();
-}
-
-class _MovingBannerState extends State<MovingBanner> {
-  double _bannerPosition = -200; // Start off-screen
-  late Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      setState(() {
-        _bannerPosition += 20; // Move the banner
-        if (_bannerPosition > MediaQuery.of(context).size.width) {
-          _bannerPosition = -200; // Reset position to start again
-        }
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel(); // Cancel the timer when the widget is disposed
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: _bannerPosition,
-      top: 100, // Adjust this value to position the banner vertically
-      child: Container(
-        color: Colors.lightGreen[300],
-        padding: const EdgeInsets.all(8.0),
-        child: const Text(
-          '🌍 Join us in making Kaohsiung Greener! 🌱\n because a green K is a clean K!',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-}
-
-
-
 // Sample screens for demonstration
 class Screen1 extends StatelessWidget {
   const Screen1({super.key});
@@ -150,26 +96,18 @@ class Screen1 extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(
-              children: [
-                Positioned.fill(
-                  child: _buildBanner(), // Your banner widget here
-                ),
-                Image.asset(
-                  'assets/greenDuck.webp',
-                  width: 400,
-                  height: 400,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Let's Play for a Greener Kaohsiung,\nbecause a green K is a clean K!",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 10, 117, 66)),
+            Image.asset(
+              'assets/greenDuck.webp',
+              width: 400,
+              height: 400,
             ),
             const SizedBox(height: 40),
             // Row to contain both cards
+            const Text(
+              '🌎 A green K is a clean K 🌱',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+            const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -197,26 +135,13 @@ class Screen1 extends StatelessWidget {
     );
   }
 
-  Widget _buildBanner() {
-    return Container(
-      color: Colors.black,
-      height: 50, // Set the height of your banner
-      child: Center(
-        child: const Text(
-          'Test Banner HERE!',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  int _generateAverageDuckScore() {
+  static int _generateAverageDuckScore() {
     // Simulating an average duck score for the last week
     Random random = Random();
     return random.nextInt(500) + 1000; // Random average score between 1000 and 1500
   }
 
-  Widget _buildCard2(BuildContext context, {
+  static Widget _buildCard2(BuildContext context, {
     required String title,
     required IconData icon,
     required int weekly_average,
@@ -232,7 +157,6 @@ class Screen1 extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Row for the average score title
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -262,17 +186,17 @@ class Screen1 extends StatelessWidget {
     );
   }
 
-  Widget _buildAverage({required String assetPath, required String title, required String value}) {
+  static Widget _buildAverage({required String assetPath, required String title, required String value}) {
     return Column(
       children: [
-        Text(title, style: const TextStyle(fontSize: 32, color: Colors.green)), // Use the asset image
+        Text(title, style: const TextStyle(fontSize: 32, color: Colors.green)),
         const SizedBox(height: 8),
         Text(value, style: const TextStyle(fontSize: 16)),
       ],
     );
   }
 
-  Widget _buildBadgeCard(BuildContext context) {
+  static Widget _buildBadgeCard(BuildContext context) {
     return Card(
       color: Colors.lightGreen[100],
       elevation: 4,
@@ -282,7 +206,6 @@ class Screen1 extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Row for the highest badge title and name
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -321,7 +244,7 @@ class Screen1 extends StatelessWidget {
     );
   }
 
-  Widget _buildAchievement({required IconData icon, required String title}) {
+  static Widget _buildAchievement({required IconData icon, required String title}) {
     return Column(
       children: [
         Icon(icon, size: 40, color: Colors.green),
@@ -331,7 +254,7 @@ class Screen1 extends StatelessWidget {
     );
   }
 
-  Widget _buildDailyQuestsCard() {
+  static Widget _buildDailyQuestsCard() {
     return Card(
       color: Colors.lightGreen[100],
       elevation: 4,
@@ -366,7 +289,7 @@ class Screen1 extends StatelessWidget {
     );
   }
 
-  Widget _buildQuestItem(String title, int points) {
+  static Widget _buildQuestItem(String title, int points) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -379,6 +302,7 @@ class Screen1 extends StatelessWidget {
     );
   }
 }
+
 
 
 class Screen2 extends StatefulWidget {
@@ -721,7 +645,7 @@ class Screen3 extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            Icon(icon, size: 40), // Display the relevant icon
+            Icon(icon, size: 40, color: Colors.green), // Display the relevant icon
             const SizedBox(width: 16),
             Expanded(
               child: Column(
