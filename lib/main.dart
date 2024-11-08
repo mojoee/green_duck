@@ -316,7 +316,7 @@ class Screen2 extends StatefulWidget {
 class _Screen2State extends State<Screen2> {
   String _selectedScope = 'Family';
   String _selectedTime = 'Daily';
-  String _selectedTeam = 'Individual'; // Default value for the team selection
+  String _selectedTeam = 'Individual';
   List<Map<String, dynamic>> _data = [];
 
   final List<String> _scopes = ['Family', 'Friends', 'Company', 'Kaohsiung City', 'Interstellar'];
@@ -332,32 +332,36 @@ class _Screen2State extends State<Screen2> {
   void _fetchData() {
     setState(() {
       _data = _generateFakeData(_selectedScope, _selectedTime, _selectedTeam);
-      // Sort data by Duck Score
       _data.sort((a, b) => int.parse(b['Duck Score']).compareTo(int.parse(a['Duck Score'])));
-      // Reassign ranks based on the sorted order
       for (int index = 0; index < _data.length; index++) {
-        _data[index]['Rank'] = index + 1; // Update rank to match sorted position
+        _data[index]['Rank'] = index + 1;
       }
     });
   }
 
   List<Map<String, dynamic>> _generateFakeData(String scope, String timeFrame, String team) {
     Random random = Random();
-    return List.generate(4, (index) {
-      int score = random.nextInt(1001) + 1000; // Random score between 1000 and 2000
+    return List.generate(6, (index) { // Generate 6 players for more rows
+      int health = random.nextInt(501) + 500;
+      int energy = random.nextInt(501) + 500;
+      int pollution = random.nextInt(501) + 500;
+      int duckScore = health + energy + pollution;
       return {
-        'Rank': index + 1, // This will be updated after sorting
+        'Rank': index + 1,
         'Alias': '${team} Player ${index + 1}',
-        'Duck Score': score.toString(),
-        'Trend': index % 2 == 0 ? 'Up' : 'Down',
-        'Color': _getColorFromScore(score),
+        'Health': health.toString(),
+        'Energy': energy.toString(),
+        'Pollution': pollution.toString(),
+        'Duck Score': duckScore.toString(),
+        'Trend': index % 2 == 0 ? 'Up' : 'Down', // Alternate trend for demo
+        'Color': _getColorFromScore(duckScore),
       };
     });
   }
 
   Color _getColorFromScore(int score) {
-    int red = ((2000 - score) / 1000 * 255).toInt(); // Red decreases as score increases
-    int green = ((score - 1000) / 1000 * 255).toInt(); // Green increases as score increases
+    int red = ((4000 - score) / 3000 * 255).toInt();
+    int green = ((score) / 3000 * 255).toInt();
     return Color.fromARGB(255, red.clamp(0, 255), green.clamp(0, 255), 0);
   }
 
@@ -365,91 +369,78 @@ class _Screen2State extends State<Screen2> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Card for dropdowns
         const Padding(
-          padding: EdgeInsets.only(top: 16.0, bottom: 16.0), // Padding below the title
+          padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+          child: Text(
+            'Choose your Fight 🎮🕹️🎰...',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
         ),
         Card(
-          color: Colors.lightGreen[100], // Light green background for the card
+          color: Colors.lightGreen[100],
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: Padding(
-            padding: const EdgeInsets.all(8.0), // Padding around the dropdowns
-            child: Column(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Title for the dropdowns
-                const Padding(
-                  padding: EdgeInsets.only(top: 16.0, bottom: 16.0), // Padding below the title
-                  child: Text(
-                    'Choose your Fight 🎮🕹️🎰...',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                // Row for dropdowns
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust space evenly
+                Column(
                   children: [
-                    // Label and Dropdown for Scope
-                    Column(
-                      children: [
-                        const Text('Scope 🔎', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        DropdownButton<String>(
-                          value: _selectedScope,
-                          items: _scopes.map((String scope) {
-                            return DropdownMenuItem<String>(
-                              value: scope,
-                              child: Text(scope),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedScope = newValue!;
-                              _fetchData(); // Fetch new data based on the selected scope
-                            });
-                          },
-                        ),
-                      ],
+                    const Text('Scope 🔎', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    DropdownButton<String>(
+                      value: _selectedScope,
+                      items: _scopes.map((String scope) {
+                        return DropdownMenuItem<String>(
+                          value: scope,
+                          child: Text(scope),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedScope = newValue!;
+                          _fetchData();
+                        });
+                      },
                     ),
-                    // Label and Dropdown for Time Frame
-                    Column(
-                      children: [
-                        const Text('Time 🕗', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        DropdownButton<String>(
-                          value: _selectedTime,
-                          items: _timeFrames.map((String timeFrame) {
-                            return DropdownMenuItem<String>(
-                              value: timeFrame,
-                              child: Text(timeFrame),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedTime = newValue!;
-                              _fetchData(); // Fetch new data based on the selected time frame
-                            });
-                          },
-                        ),
-                      ],
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Text('Time 🕗', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    DropdownButton<String>(
+                      value: _selectedTime,
+                      items: _timeFrames.map((String timeFrame) {
+                        return DropdownMenuItem<String>(
+                          value: timeFrame,
+                          child: Text(timeFrame),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedTime = newValue!;
+                          _fetchData();
+                        });
+                      },
                     ),
-                    // Label and Dropdown for Team
-                    Column(
-                      children: [
-                        const Text('Team 👯‍♀️', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        DropdownButton<String>(
-                          value: _selectedTeam,
-                          items: _teams.map((String team) {
-                            return DropdownMenuItem<String>(
-                              value: team,
-                              child: Text(team),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedTeam = newValue!;
-                              _fetchData(); // Fetch new data based on the selected team
-                            });
-                          },
-                        ),
-                      ],
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Text('Team 👯‍♀️', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    DropdownButton<String>(
+                      value: _selectedTeam,
+                      items: _teams.map((String team) {
+                        return DropdownMenuItem<String>(
+                          value: team,
+                          child: Text(team),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedTeam = newValue!;
+                          _fetchData();
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -457,16 +448,14 @@ class _Screen2State extends State<Screen2> {
             ),
           ),
         ),
-        const SizedBox(height: 20), // Space before the title
-        // Title for the leaderboard
+        const SizedBox(height: 20),
         Center(
           child: Text(
-            '${_selectedTime} ${_selectedScope} Leaderboard', // Include the selected scope in the title
+            '${_selectedTime} ${_selectedScope} Leaderboard',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
         ),
-        const SizedBox(height: 20), // Space before the data table
-        // DataTable
+        const SizedBox(height: 20),
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -474,6 +463,9 @@ class _Screen2State extends State<Screen2> {
               columns: const <DataColumn>[
                 DataColumn(label: Text('Rank')),
                 DataColumn(label: Text('Alias')),
+                DataColumn(label: Text('Health')),
+                DataColumn(label: Text('Energy')),
+                DataColumn(label: Text('Pollution')),
                 DataColumn(label: Text('Duck Score')),
                 DataColumn(label: Text('Trend')),
               ],
@@ -481,14 +473,17 @@ class _Screen2State extends State<Screen2> {
                 return DataRow(cells: <DataCell>[
                   DataCell(Text(data['Rank'].toString())),
                   DataCell(Text(data['Alias'])),
+                  DataCell(Text(data['Health'])),
+                  DataCell(Text(data['Energy'])),
+                  DataCell(Text(data['Pollution'])),
                   DataCell(
                     Row(
                       children: [
                         Image.asset(
-                          'assets/duck.png', // Load the duck image from assets
+                          'assets/duck.png',
                           width: 20,
                           height: 20,
-                          color: data['Color'], // Change the color based on score
+                          color: data['Color'],
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -498,7 +493,12 @@ class _Screen2State extends State<Screen2> {
                       ],
                     ),
                   ),
-                  DataCell(Text(data['Trend'])),
+                  DataCell(
+                    Icon(
+                      data['Trend'] == 'Up' ? Icons.arrow_upward : Icons.arrow_downward,
+                      color: data['Trend'] == 'Up' ? Colors.green : Colors.red,
+                    ),
+                  ),
                 ]);
               }).toList(),
             ),
@@ -508,6 +508,8 @@ class _Screen2State extends State<Screen2> {
     );
   }
 }
+
+
 
 class Screen3 extends StatelessWidget {
   const Screen3({super.key});
