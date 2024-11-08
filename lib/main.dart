@@ -305,7 +305,6 @@ class Screen1 extends StatelessWidget {
 }
 
 
-
 class Screen2 extends StatefulWidget {
   const Screen2({super.key});
 
@@ -341,7 +340,7 @@ class _Screen2State extends State<Screen2> {
 
   List<Map<String, dynamic>> _generateFakeData(String scope, String timeFrame, String team) {
     Random random = Random();
-    return List.generate(6, (index) { // Generate 6 players for more rows
+    return List.generate(6, (index) {
       int health = random.nextInt(501) + 500;
       int energy = random.nextInt(501) + 500;
       int pollution = random.nextInt(501) + 500;
@@ -353,7 +352,7 @@ class _Screen2State extends State<Screen2> {
         'Energy': energy.toString(),
         'Pollution': pollution.toString(),
         'Duck Score': duckScore.toString(),
-        'Trend': index % 2 == 0 ? 'Up' : 'Down', // Alternate trend for demo
+        'Trend': index % 2 == 0 ? 'Up' : 'Down',
         'Color': _getColorFromScore(duckScore),
       };
     });
@@ -460,6 +459,7 @@ class _Screen2State extends State<Screen2> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
+              headingRowColor: MaterialStateProperty.all(Colors.lightGreen[100]),
               columns: const <DataColumn>[
                 DataColumn(label: Text('Rank')),
                 DataColumn(label: Text('Alias')),
@@ -469,37 +469,43 @@ class _Screen2State extends State<Screen2> {
                 DataColumn(label: Text('Duck Score')),
                 DataColumn(label: Text('Trend')),
               ],
-              rows: _data.map((data) {
-                return DataRow(cells: <DataCell>[
-                  DataCell(Text(data['Rank'].toString())),
-                  DataCell(Text(data['Alias'])),
-                  DataCell(Text(data['Health'])),
-                  DataCell(Text(data['Energy'])),
-                  DataCell(Text(data['Pollution'])),
-                  DataCell(
-                    Row(
-                      children: [
-                        Image.asset(
-                          'assets/duck.png',
-                          width: 20,
-                          height: 20,
-                          color: data['Color'],
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          data['Duck Score'],
-                          style: TextStyle(color: data['Color']),
-                        ),
-                      ],
+              rows: _data.asMap().entries.map((entry) {
+                int index = entry.key;
+                var data = entry.value;
+
+                return DataRow(
+                  color: index.isEven ? MaterialStateProperty.all(Colors.grey.shade100) : MaterialStateProperty.all(Colors.white),
+                  cells: <DataCell>[
+                    DataCell(Text(data['Rank'].toString())),
+                    DataCell(Text(data['Alias'])),
+                    DataCell(Text(data['Health'])),
+                    DataCell(Text(data['Energy'])),
+                    DataCell(Text(data['Pollution'])),
+                    DataCell(
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/duck.png',
+                            width: 20,
+                            height: 20,
+                            color: data['Color'],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            data['Duck Score'],
+                            style: TextStyle(color: data['Color']),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  DataCell(
-                    Icon(
-                      data['Trend'] == 'Up' ? Icons.arrow_upward : Icons.arrow_downward,
-                      color: data['Trend'] == 'Up' ? Colors.green : Colors.red,
+                    DataCell(
+                      Icon(
+                        data['Trend'] == 'Up' ? Icons.arrow_upward : Icons.arrow_downward,
+                        color: data['Trend'] == 'Up' ? Colors.green : Colors.red,
+                      ),
                     ),
-                  ),
-                ]);
+                  ],
+                );
               }).toList(),
             ),
           ),
@@ -508,6 +514,7 @@ class _Screen2State extends State<Screen2> {
     );
   }
 }
+
 
 
 
